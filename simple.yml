@@ -1,0 +1,26 @@
+version: '2.0'
+services:
+  registry:
+    image: registry:2.7
+    container_name: registry
+    ports:
+      - 5000:5000
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /etc/letsencrypt/live/thestuffer.com/fullchain.pem
+      REGISTRY_HTTP_TLS_KEY: /etc/letsencrypt/live/thestuffer.com/privkey.pem
+    volumes:
+      - ./registry-data:/var/lib/registry
+      - ./registry-config/simple.yml:/etc/docker/registry/config.yml
+      - /etc/letsencrypt:/etc/letsencrypt
+
+  ui:
+    image: joxit/docker-registry-ui:latest
+    container_name: registry-ui
+    ports:
+      - 9001:80
+    environment:
+      - REGISTRY_TITLE=My Private Docker Registry
+      - REGISTRY_URL=http://localhost:5000
+      - SINGLE_REGISTRY=true
+    depends_on:
+      - registry
