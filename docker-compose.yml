@@ -1,9 +1,23 @@
 version: '3'
 services:
-    registry:
-        restart: always
-        image: registry:2
-        ports:
-            - 5000:5000
-        volumes:
-            - ./data:/var/lib/registry
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    volumes:
+      - ./registry-config/simple.yml:/etc/docker/registry/config.yml
+      - ./registry-data:/var/lib/registry
+
+  registy-ui:
+    restart: always
+    image: joxit/docker-registry-ui:latest
+    container_name: registry-ui
+    ports:
+      - 9001:80
+    environment:
+      - REGISTRY_TITLE=My Private Docker Registry
+      - REGISTRY_URL=http://10.8.0.1:5000
+      - SINGLE_REGISTRY=true
+    depends_on:
+      - registry
