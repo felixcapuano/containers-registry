@@ -3,6 +3,7 @@ services:
   registry:
     restart: always
     image: registry:2
+    container_name: registry-store
     ports:
       - 5000:5000
     volumes:
